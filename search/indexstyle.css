@@ -1,0 +1,21 @@
+h1 {
+    margin-top: 20%;
+    padding-top: 10%;
+    color: rgb(70, 70, 211);
+    text-align: center;
+}
+div {
+    background-color: blue;
+}
+.container{
+    text-align: center;
+}
+
+.navigate{
+    float: right;
+    margin: 2px;
+}
+
+th {
+    padding: 20px;
+}
