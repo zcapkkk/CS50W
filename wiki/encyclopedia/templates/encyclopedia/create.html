@@ -2,6 +2,14 @@
 
 {% block body%}
 <h1>Create a page</h1>
-Functionality: Create your own page in markup
+
+
+<form action ="{%url 'create'%}" method="POST">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <input type="submit" value="Submit Entry">
+</form>
 
 {% endblock%}

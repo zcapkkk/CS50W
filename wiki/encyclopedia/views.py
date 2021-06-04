@@ -1,12 +1,22 @@
+from typing import Text
+from django.forms.widgets import Textarea
 from django.http.response import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from random import choice
 from django.urls import reverse
 from django.utils.html import word_split_re
+from django import forms
 
 import markdown2
 from . import util
 
+class NewPage(forms.Form):
+    title = forms.CharField(max_length=120, label="Entry Name")
+    body = forms.CharField(widget=Textarea, label="Entry")
+
+class EditPage(forms.Form):
+    def __init__(self, existing):
+        self.body = forms.CharField(widget=Textarea, label="Entry", initial = existing)
 
 
 def index(request):
@@ -40,14 +50,33 @@ def search(request):
             return render(request, "encyclopedia/search.html", {'results': results})
 
 
-
-
-
-
-
  
 def create(request):
-    return render(request, "encyclopedia/create.html")
+    # check method
+    if request.method == 'POST':
+        
+        form = NewPage(request.POST)
+
+        # check validity
+        if form.is_valid():
+            # break down the form
+            title = form.cleaned_data["title"]
+            body = form.cleaned_data["body"]
+
+            util.save_entry(title, body)
+
+            return HttpResponseRedirect(reverse("index"))
+
+        else:
+            return render(request, "encyclopedia/create", {"form": form})
+
+    return render(request, "encyclopedia/create.html", {"form": NewPage()})
+
+
+
+
+
+
 
 def random(request):
     return entry(request, choice(util.list_entries()))
