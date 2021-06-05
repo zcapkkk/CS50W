@@ -14,9 +14,31 @@ class NewPage(forms.Form):
     title = forms.CharField(max_length=120, label="Entry Name")
     body = forms.CharField(widget=Textarea, label="Entry")
 
-class EditPage(forms.Form):
-    def __init__(self, existing):
-        self.body = forms.CharField(widget=Textarea, label="Entry", initial = existing)
+
+
+def edit(request, entryName):
+
+    if request.method == "POST":
+        form = NewPage(request.POST)
+
+        if form.is_valid():
+            newentry = form.cleaned_data["body"]
+            util.save_entry(entryName, newentry)
+
+            return HttpResponseRedirect(f"/wiki/{entryName}")
+            
+        else:
+            return render(request, "encyclopedia/edit.html", {"form": form})
+
+
+
+    markdown = util.get_entry(entryName)
+    return render(request, "encyclopedia/edit.html",{
+        "form": NewPage(initial={
+            'title': entryName,
+            'body': markdown
+        })
+        })
 
 
 def index(request):
@@ -68,7 +90,7 @@ def create(request):
             return HttpResponseRedirect(reverse("index"))
 
         else:
-            return render(request, "encyclopedia/create", {"form": form})
+            return render(request, "encyclopedia/create.html", {"form": form})
 
     return render(request, "encyclopedia/create.html", {"form": NewPage()})
 
