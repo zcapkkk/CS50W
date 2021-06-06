@@ -2,9 +2,9 @@
 
 
 {% block body %}
-<h1>Edit this page</h1>
+<h1>Edit the {{ entryName }} page</h1>
 
-<form action="" method="POST">
+<form action="{% url 'edit' entryName %}" method="POST">
     {% csrf_token %}
     <table>
     {{ form.as_table }}

@@ -5,6 +5,6 @@
 
 {{ entry| safe }}
 
-<a href="{{request.path}}/edit">Edit this page</a>
+<a href="{% url 'edit' entryName %}">Edit this page</a>
 
 {% endblock %}

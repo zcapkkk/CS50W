@@ -25,10 +25,10 @@ def edit(request, entryName):
             newentry = form.cleaned_data["body"]
             util.save_entry(entryName, newentry)
 
-            return HttpResponseRedirect(f"/wiki/{entryName}")
+            return HttpResponseRedirect(reverse('entry', kwargs={'entryName':entryName}))
             
         else:
-            return render(request, "encyclopedia/edit.html", {"form": form})
+            return render(request, "encyclopedia/edit.html", {"form": form, "entryName": entryName})
 
 
 
@@ -37,8 +37,8 @@ def edit(request, entryName):
         "form": NewPage(initial={
             'title': entryName,
             'body': markdown
-        })
-        })
+        }),
+        "entryName": entryName})
 
 
 def index(request):
@@ -53,7 +53,8 @@ def entry(request, entryName):
         html = markdown2.markdown(util.get_entry(entryName))
     
     return render(request, "encyclopedia/entry.html", {
-        "entry" : html
+        "entry" : html,
+        "entryName": entryName
     })
 
 
@@ -62,7 +63,7 @@ def search(request):
         item = request.GET
         query = item["q"]
         if query in util.list_entries():
-            return HttpResponseRedirect(f"wiki/{query}")
+            return HttpResponseRedirect(reverse('entry', args=[query]))
         else:
             results = []
             for word in util.list_entries():
