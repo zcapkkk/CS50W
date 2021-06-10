@@ -8,7 +8,9 @@ class User(AbstractUser):
 
 class Listing(models.Model):
     name = models.CharField(name="Product Name", max_length=120)
-    seller = models.ForeignKey(User, on_delete=CASCADE)
+    seller = models.ForeignKey(User, on_delete=CASCADE, name="Seller")
+    description = models.TextField(name="Product Description")
+  
 
 class Bid(models.Model):
     price = models.DecimalField(name="Bidding Price", max_digits=20, decimal_places=2)

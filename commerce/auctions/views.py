@@ -6,13 +6,19 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 from django.contrib.auth.decorators import login_required
+from .models import Listing
 
 from .models import User
 
-class CreateForm(forms.Form):
-    name = forms.CharField(max_length=120, label="Product Name")
-    description = forms.CharField(label="Product Description", widget=Textarea)
-    price = forms.DecimalField(label="Starting Price", decimal_places=2, max_digits=20)
+# class CreateForm(forms.Form):
+#     name = forms.CharField(max_length=120, label="Product Name")
+#     description = forms.CharField(label="Product Description", widget=Textarea)
+#     price = forms.DecimalField(label="Starting Price", decimal_places=2, max_digits=20)
+
+class CreateForm(forms.ModelForm):
+    class Meta:
+        model = Listing
+        fields =  ['Product Name','Product Description','Seller']
 
 
 
@@ -21,12 +27,13 @@ def index(request):
 
 
 def create(request):
-    # if request.method == "POST":
-    #     listingForm = CreateForm(request.POST)
-    #     if listingForm.is_valid():
-            
-
-
+    if request.method == "POST":
+        listingForm = CreateForm(request.POST)
+        if listingForm.is_valid(): 
+            listingForm.save()
+            return HttpResponseRedirect(reverse('auctions:index'))
+        else:
+            return render(request, "auctions/create.html", {"form":  listingForm})          
 
     return render(request, "auctions/create.html", {"form": CreateForm()})
 
@@ -44,7 +51,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("auctions:index"))
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -55,7 +62,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("auctions:index"))
 
 
 def register(request):
@@ -80,6 +87,6 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("auctions:index"))
     else:
         return render(request, "auctions/register.html")

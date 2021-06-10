@@ -5,7 +5,7 @@
 
 {% if user.is_authenticated %}
 <h1>Create a new listing:</h1>
-<form action="{% url 'index' %}" method="POST">
+<form action="{% url 'auctions:create' %}" method="POST">
     {% csrf_token %}
     <table>
         {{form.as_table}}
