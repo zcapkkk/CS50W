@@ -7,7 +7,7 @@
     <li>{{item.description}}</li>
     <li>{{item.seller}}</li>
     <li>{{item.startingbid}}</li>
-    <li>{{item.imageurl}}</li>
+    <img src="{{ item.imageurl}}">
 
 </ul>
 
@@ -31,7 +31,8 @@
 <div>
     {% for comment in comments %}
     <div class="container" style="border: 1px solid grey;">
-    {{comment}}
+    {{ comment.user }} says:
+    <p>{{comment.text}}</p>
     </div>
     {% empty %}
     No comments.
@@ -39,5 +40,6 @@
     {% endfor %}
 </div>
 
+<a href="{% url 'comment' item.id %}">Add comment</a>
 
 {% endblock %}

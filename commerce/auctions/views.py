@@ -19,6 +19,11 @@ class CreateForm(forms.ModelForm):
         model = Listing
         fields = ["title", "description", "startingbid", "imageurl", "category"]
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["text"]
+
 
 
 def index(request):
@@ -39,7 +44,7 @@ def listing(request, item_id):
         "item": Listing.objects.get(id=item_id),
         "bids": bids,
         "topbid":topbid,
-        "comments": Comment.objects.all()
+        "comments": Comment.objects.filter(item_id=item_id)
         })
 
 @login_required
@@ -70,7 +75,7 @@ def bid(request, item_id):
             })
         else:
             newbidform = bidform.save(commit=False)
-            newbidform.user = User.objects.get(username=request.META["USER"])
+            newbidform.user = request.user
             newbidform.item = Listing.objects.get(id=item_id)
             newbidform.save()
 
@@ -90,7 +95,7 @@ def create(request):
     if request.method=="POST":
         form = CreateForm(request.POST)
         newbid = form.save(commit=False)
-        newbid.seller = User.objects.get(username=request.META["USER"])
+        newbid.seller = request.user
         newbid.save()
         return HttpResponseRedirect(reverse(index))
 
@@ -100,6 +105,22 @@ def create(request):
     
     return render(request, "auctions/create.html", {"form": CreateForm()})
     
+
+@login_required
+def comment(request, item_id):
+    if request.method == "POST":
+        commentform = CommentForm(request.POST)
+
+        newcommentform = commentform.save(commit=False)
+        newcommentform.user=request.user
+        newcommentform.item = Listing.objects.get(id=item_id)
+
+        newcommentform.save()
+
+        return HttpResponseRedirect(reverse("listing", args=(item_id,)))
+
+
+    return render(request, "auctions/comment.html", {"form": CommentForm(), "item": Listing.objects.get(id=item_id)})
 
 
 def login_view(request):
