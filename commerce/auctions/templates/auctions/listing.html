@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h1>{{item.title}}</h1>
+<ul>
+    <li>{{item.description}}</li>
+    <li>{{item.seller}}</li>
+    <li>{{item.startingbid}}</li>
+    <li>{{item.imageurl}}</li>
+
+</ul>
+
+<!-- Old bids:
+<div>
+    <ul>
+        {% for bid in bids %}
+        <li>{{ bid }}</li>
+        {% endfor %}
+    </ul>    
+</div> -->
+
+<div>
+    Current bid: {{ topbid }}
+</div>
+
+<a href="{% url 'bid' item.id %}">Bid</a>
+
+
+<h2>Comments</h2>
+<div>
+    {% for comment in comments %}
+    <div class="container" style="border: 1px solid grey;">
+    {{comment}}
+    </div>
+    {% empty %}
+    No comments.
+    
+    {% endfor %}
+</div>
+
+
+{% endblock %}

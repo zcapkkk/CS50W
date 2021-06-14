@@ -1,22 +1,32 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.deletion import CASCADE
 
 
 class User(AbstractUser):
     pass
 
 class Listing(models.Model):
-    name = models.CharField(name="Product Name", max_length=120)
-    seller = models.ForeignKey(User, on_delete=CASCADE, name="Seller")
-    description = models.TextField(name="Product Description")
-  
+    title = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")
+    startingbid = models.DecimalField(max_digits=16, decimal_places=2)
+    imageurl = models.URLField(blank=True)
+    category = models.CharField(max_length=64, blank=True)
+    
+    def __str__(self):
+        return f"{self.title}: object {self.id}"
+    
 
 class Bid(models.Model):
-    price = models.DecimalField(name="Bidding Price", max_digits=20, decimal_places=2)
-    product = models.ForeignKey(Listing, on_delete=CASCADE)
+    user = models.ForeignKey(User, related_name="bidder", on_delete=models.CASCADE)
+    item = models.ForeignKey(Listing, related_name="bidobject", on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=16, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.price} on {self.item} by {self.user}"
 
 class Comment(models.Model):
-    product = models.ForeignKey(Listing, on_delete=CASCADE)
-    poster = models.ForeignKey(User, on_delete=CASCADE)
-    text = models.TextField(name="User Comment")
+    user = models.ForeignKey(User, related_name="commenter", on_delete=models.CASCADE)
+    item = models.ForeignKey(Listing, related_name="commentobject", on_delete=models.CASCADE)
+    text = models.TextField()
+
