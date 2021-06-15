@@ -7,7 +7,7 @@ from django.urls import reverse
 from django import forms
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listing, Bid, Comment
+from .models import User, Listing, Bid, Comment, Watchitem
 
 class BidForm(forms.ModelForm):
     class Meta:
@@ -173,3 +173,21 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+@login_required
+def watchlist(request, user_id):
+    if request.method=="POST":
+        if Watchitem.objects.filter(item_id=request.POST["item_id"]).exists():
+            return render(request, "auctions/watchlist.html", {"watchlist":Watchitem.objects.filter(user_id=user_id)})
+        witem = Watchitem(user=request.user, item = Listing.objects.get(id=request.POST["item_id"]))
+        witem.save()
+
+    if request.method=="GET":
+        if User.objects.get(id=user_id) != request.user:
+            return HttpResponse("Denied access")
+
+
+    return render(request, "auctions/watchlist.html", {"watchlist":Watchitem.objects.filter(user_id=user_id)})
+    
+        
+        

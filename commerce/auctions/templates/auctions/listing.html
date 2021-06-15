@@ -3,11 +3,21 @@
 {% block body %}
 
 <h1>{{item.title}}</h1>
+
+<br>
+<form action="{% url 'watchlist' request.user.id %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="item_id" value="{{ item.id }}">
+    <input type="submit" value="Add to watchlist">
+</form>
+<br>
+</br>
+
 <ul>
     <li>{{item.description}}</li>
     <li>{{item.seller}}</li>
     <li>{{item.startingbid}}</li>
-    <img src="{{ item.imageurl}}">
+    <img src="{{ item.imageurl }}">
 
 </ul>
 
