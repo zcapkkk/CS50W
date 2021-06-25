@@ -39,10 +39,16 @@ function compose_email() {
     .then(result => {
       // Print result
       console.log(result);
+      alert(result);
+      // If success return to sent inbox with load function
+      // else return an alert stating error
     });
-
+    return load_mailbox('sent');
+    
   }
 }
+
+
 
 function load_mailbox(mailbox) {
   
@@ -52,4 +58,39 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => { 
+    if (emails.length != 0) {
+    
+      emails.forEach(email => {
+      const div = document.createElement('div');
+      div.innerHTML = email.subject;
+
+      document.addEventListener('click', function() {
+        // Archive button
+        console.log('button clicked');
+      });
+
+      document.querySelector('#emails-view').append(div);
+    });
+    }
+    else {
+      
+      const div = document.createElement('div');
+      div.innerHTML = `Your ${mailbox} mailbox is empty`;
+      document.querySelector('#emails-view').append(div);
+    }
+    
+    
+  });
+}
+
+
+function load_mail(mail_id) {
+
+  //function that opens an email
+
+
 }
