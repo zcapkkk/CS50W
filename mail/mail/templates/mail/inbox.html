@@ -21,17 +21,25 @@
                 From: <input disabled class="form-control" value="{{ request.user.email }}">
             </div>
             <div class="form-group">
-                To: <input id="compose-recipients" class="form-control">
+                To: <input id="compose-recipients" placeholder="Recipients" class="form-control">
             </div>
             <div class="form-group">
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
+            <button type="button" class="btn btn-primary">Send Email</button>
         </form>
+    </div>
+
+
+    <div id="email-view">
+        <h3 id="email-subject"></h1>
+        <h4 id="email-sender"></h4>
+        <p id="email-body"></p>
     </div>
 {% endblock %}
 
 {% block script %}
     <script src="{% static 'mail/inbox.js' %}"></script>
+
 {% endblock %}

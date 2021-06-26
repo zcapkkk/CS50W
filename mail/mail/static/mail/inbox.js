@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // By default, load the inbox
   load_mailbox('inbox');
+
+  
 });
 
 function compose_email() {
@@ -15,6 +17,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -27,7 +30,8 @@ function compose_email() {
     const subject = document.querySelector('#compose-subject').value;
     const body = document.querySelector('#compose-body').value;
 
-    fetch('emails/', {
+
+    fetch('/emails', {
       method: 'POST',
       body: JSON.stringify({
         recipients: recipients,
@@ -38,12 +42,12 @@ function compose_email() {
     .then(response => response.json())
     .then(result => {
       // Print result
-      console.log(result);
-      alert(result);
+      //console.log(result);
       // If success return to sent inbox with load function
       // else return an alert stating error
+
+      load_mailbox('sent')
     });
-    return load_mailbox('sent');
     
   }
 }
@@ -55,6 +59,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -66,11 +71,16 @@ function load_mailbox(mailbox) {
     
       emails.forEach(email => {
       const div = document.createElement('div');
-      div.innerHTML = email.subject;
+      div.innerHTML = `
+      <h6> ${email.subject} <h6>
+      <ul>
+        <li>From: ${email.sender}
+        <li>Date: ${email.timestamp}
+      <ul>
+      `;
 
-      document.addEventListener('click', function() {
-        // Archive button
-        console.log('button clicked');
+      div.addEventListener('click', function() {
+        load_mail(email.id);
       });
 
       document.querySelector('#emails-view').append(div);
@@ -90,7 +100,22 @@ function load_mailbox(mailbox) {
 
 function load_mail(mail_id) {
 
+  //TODO put request to mark email as read
+
+  //hide views
+  document.querySelector('#email-view').style.display = 'block';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+
   //function that opens an email
-
-
+  fetch(`/emails/${mail_id}`)
+  .then(response => response.json())
+  .then(email => {
+    document.querySelector('#email-subject').innerHTML = email.subject;
+    document.querySelector('#email-sender').innerHTML = email.sender;
+    document.querySelector('#email-body').innerHTML = email.body;
+  })
+//TODO put request to archive
 }
+
+//TODO reply function
