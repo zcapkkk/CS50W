@@ -79,11 +79,65 @@ function load_mailbox(mailbox) {
       <ul>
       `;
 
+      if (email.read) {
+        div.style.backgroundColor = "grey";
+      }
+
+      
       div.addEventListener('click', function() {
         load_mail(email.id);
-      });
+      })
+
+      // Unread button
+      const unread_button = document.createElement('button');
+      unread_button.innerHTML = 'Mark as unread';
+      if (!email.read) {
+        unread_button.style.display = "none";
+      }
+      else {
+        unread_button.style.display = "show";
+      }
+      unread_button.addEventListener('click', function(event) {
+        unread(email.id);
+        div.style.backgroundColor = "white";
+        //console.log(email.read);
+        event.stopPropagation();
+        // refresh the page for styling to occur
+        load_mailbox(mailbox);
+      })
+      
+      
+
+      // Archiving
+      
+      const archive_button = document.createElement('button');
+
+
+      
+
+      if (!email.archived) {
+        archive_button.innerHTML = "Archive Email";
+        archive_button.addEventListener('click', function(event) {
+          archive(email.id);
+          event.stopPropagation();
+          load_mailbox(mailbox);
+        })
+      }
+      else {
+        archive_button.innerHTML = "Unarchive Email";
+        archive_button.addEventListener('click', function(event) {
+          unarchive(email.id);
+          event.stopPropagation();
+          load_mailbox(mailbox)
+        })
+      }
+
+      div.append(unread_button);
+      div.append(archive_button);
+
 
       document.querySelector('#emails-view').append(div);
+      
     });
     }
     else {
@@ -100,8 +154,6 @@ function load_mailbox(mailbox) {
 
 function load_mail(mail_id) {
 
-  //TODO put request to mark email as read
-
   //hide views
   document.querySelector('#email-view').style.display = 'block';
   document.querySelector('#emails-view').style.display = 'none';
@@ -114,8 +166,47 @@ function load_mail(mail_id) {
     document.querySelector('#email-subject').innerHTML = email.subject;
     document.querySelector('#email-sender').innerHTML = email.sender;
     document.querySelector('#email-body').innerHTML = email.body;
-  })
+    read(mail_id);
+    })
+
+  
 //TODO put request to archive
 }
 
 //TODO reply function
+
+function read(mail_id) {
+  fetch(`emails/${mail_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+      })
+  })
+}
+
+function unread(mail_id) {
+  fetch(`emails/${mail_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: false
+    })
+  })
+}
+
+function archive(mail_id) {
+  fetch(`emails/${mail_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: true
+    })
+  })
+}
+
+function unarchive(mail_id) {
+  fetch(`emails/${mail_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: false
+    })
+  })
+}
