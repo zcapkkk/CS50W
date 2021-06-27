@@ -12,17 +12,28 @@ document.addEventListener('DOMContentLoaded', function() {
   
 });
 
-function compose_email() {
+function compose_email(prefill_sender, prefill_subject, prefill_body) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#email-view').style.display = 'none';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  // // Clear out composition fields
+  // document.querySelector('#compose-recipients').value = '';
+  // document.querySelector('#compose-subject').value = '';
+  // document.querySelector('#compose-body').value = '';
+
+  prefill_sender = prefill_sender || '';
+  prefill_subject = prefill_subject || '';
+  prefill_body = prefill_body || '';
+
+
+  document.querySelector('#compose-recipients').value = prefill_sender;
+  document.querySelector('#compose-subject').value = prefill_subject;
+  document.querySelector('#compose-body').value = prefill_body;
+
+  
 
   const send = document.querySelector('.btn.btn-primary')
   send.onclick = () => {
@@ -42,7 +53,7 @@ function compose_email() {
     .then(response => response.json())
     .then(result => {
       // Print result
-      //console.log(result);
+      console.log(result);
       // If success return to sent inbox with load function
       // else return an alert stating error
 
@@ -167,13 +178,33 @@ function load_mail(mail_id) {
     document.querySelector('#email-sender').innerHTML = email.sender;
     document.querySelector('#email-body').innerHTML = email.body;
     read(mail_id);
-    })
+    const reply_button = document.createElement('button');
+    reply_button.innerHTML = "Reply";
+    reply_button.addEventListener('click', function(){
+      var sender = email.sender;
+      var body = `On ${email.timestamp}, ${email.sender} wrote: ${email.body}`;
+      var subject = email.subject;
+
+      if (!subject.includes("Re:")) {
+        subject = `Re: ${subject}`;
+      }
+      compose_email(sender, subject, body);
+      });
+    document.querySelector('#email-view').appendChild(reply_button);
+    
+    });
 
   
-//TODO put request to archive
+  
+
+
+  
+
+    
+  
+  
 }
 
-//TODO reply function
 
 function read(mail_id) {
   fetch(`emails/${mail_id}`, {
