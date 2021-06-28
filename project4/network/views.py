@@ -1,14 +1,28 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models.base import Model
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post, Like, Follow
+
 
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == "POST":
+        post = Post(
+            poster = request.user,
+            post = request.POST["post"],
+        )
+        post.save()
+
+        return HttpResponseRedirect(reverse("index"))
+
+
+    return render(request, "network/index.html", {
+        "posts": Post.objects.all()
+    })
 
 
 def login_view(request):
