@@ -21,9 +21,32 @@ def index(request):
 
 
     return render(request, "network/index.html", {
-        "posts": Post.objects.all()
+        "posts": Post.objects.order_by('-date')
     })
 
+def profile(request, username):
+
+    if request.method == 'POST':
+        # do something that prevents repeat
+        followlink = Follow(
+            follower = request.user,
+            following = User.objects.get(username=follow_this_user)
+        )
+        followlink.save()
+        
+
+    # verify user_id exists
+
+    userprofile = User.objects.get(username=username)
+
+    return render(request, "network/profile.html", {
+        "userprofile": userprofile,
+        "user_posts": Post.objects.filter(poster=userprofile),
+        "follows": Follow.objects.filter(follower=request.user)
+    })
+
+
+    
 
 def login_view(request):
     if request.method == "POST":

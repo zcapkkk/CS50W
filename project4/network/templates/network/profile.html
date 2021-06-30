@@ -1,0 +1,39 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<h2>{{ userprofile.username }}</h2>
+
+{% for post in user_posts %}
+<div class="user_post">
+    <h4>{{ post.post }}</h4>
+    Posted on {{ post.date }}
+</div>
+{% empty %}
+<p>This person has not posted</p>
+{% endfor %}
+
+
+<br>
+<br>
+
+{% if request.user != userprofile %}
+<form method="POST" action="{% url 'profile' user.username%}">
+    {% csrf_token %}
+    <input type="hidden" name="following" value="{{ userprofile.username }}">
+    <button type="submit">Follow <strong>{{ userprofile.username }}</strong></button>
+</form>
+{% else %}
+<h3>You are following:</h3>
+<ul>
+{% for following in follows %}
+    <li><a href="{% url 'profile' following.following %}">{{ following.following }}</a>
+{% empty %}
+You are not following anyone.
+{% endfor %}
+</ul>
+{% endif %}
+
+
+
+
+{% endblock %}

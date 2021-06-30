@@ -6,3 +6,9 @@ button {
     color: azure;
     background-color: navy;
 }
+
+.index_post {
+    background-color: beige;
+    padding: 5px;
+    margin: 5px;
+}

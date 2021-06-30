@@ -21,8 +21,8 @@
 
 <div>
     {% for post in posts %}
-    <div>
-        <h4><strong>{{ post.poster }}</strong> says:</h4>
+    <div class="index_post">
+        <h4><strong><a href="{% url 'profile' post.poster.username %}">{{ post.poster }}</a></strong> says:</h4>
         {{ post.post }}
         <br>
         {{ post.date }}
