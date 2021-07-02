@@ -4,6 +4,7 @@ from django.db.models.base import Model
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import User, Post, Like, Follow
 
@@ -24,26 +25,53 @@ def index(request):
         "posts": Post.objects.order_by('-date')
     })
 
+
+
 def profile(request, username):
+
+    try:
+        User.objects.get(username=username)
+    except ObjectDoesNotExist: 
+        return HttpResponse("User does not exist")
+
+    userprofile = User.objects.get(username=username)
+    followinglist = Follow.objects.filter(follower=request.user).values_list('following', flat=True)
 
     if request.method == 'POST':
         # do something that prevents repeat
-        followlink = Follow(
-            follower = request.user,
-            following = User.objects.get(username=follow_this_user)
-        )
-        followlink.save()
-        
 
+       
+        followthis = str(request.POST["followthis"])
+        followthis = User.objects.get(username=followthis)
+        followthisid = followthis.id
+
+        if followthisid not in followinglist:
+            followlink = Follow(
+                follower = request.user,
+                following = followthis
+            )
+            followlink.save()
+        else:
+            Follow.objects.get(follower=request.user,following=followthis).delete()
+
+        return HttpResponseRedirect(reverse("profile", args=(request.user.username,)))
+
+        
     # verify user_id exists
 
-    userprofile = User.objects.get(username=username)
-
-    return render(request, "network/profile.html", {
-        "userprofile": userprofile,
-        "user_posts": Post.objects.filter(poster=userprofile),
-        "follows": Follow.objects.filter(follower=request.user)
-    })
+    if request.user.is_authenticated:
+        return render(request, "network/profile.html", {
+            "userprofile": userprofile,
+            "user_posts": Post.objects.filter(poster=userprofile),
+            "follows": Follow.objects.filter(follower=request.user),
+            "followinglist": followinglist
+        })
+    else:
+        return render(request, "network/profile.html", {
+            "userprofile": userprofile,
+            "user_posts": Post.objects.filter(poster=userprofile),
+            "follows": None
+        })
 
 
     

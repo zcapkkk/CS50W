@@ -16,23 +16,34 @@
 <br>
 <br>
 
-{% if request.user != userprofile %}
-<form method="POST" action="{% url 'profile' user.username%}">
-    {% csrf_token %}
-    <input type="hidden" name="following" value="{{ userprofile.username }}">
-    <button type="submit">Follow <strong>{{ userprofile.username }}</strong></button>
-</form>
-{% else %}
-<h3>You are following:</h3>
-<ul>
-{% for following in follows %}
-    <li><a href="{% url 'profile' following.following %}">{{ following.following }}</a>
-{% empty %}
-You are not following anyone.
-{% endfor %}
-</ul>
-{% endif %}
+{% if user.is_authenticated %}
 
+
+    {% if request.user != userprofile %}
+        <form method="POST" action="{% url 'profile' user.username%}">
+            {% csrf_token %}
+            <input type="hidden" name="followthis" value="{{ userprofile.username }}">
+            {% if userprofile.id in followinglist %}    
+                <button type="submit">Unfollow <strong>{{ userprofile.username }}</strong></button>   
+            {% else %}
+                <button type="submit">Follow <strong>{{ userprofile.username }}</strong></button>
+            {% endif %}
+        </form>
+    {% else %}
+        <h3>You are following:</h3>
+        <ul>
+        {% for following in follows %}
+            <li><a href="{% url 'profile' following.following %}">{{ following.following }}</a>
+        {% empty %}
+            You are not following anyone.
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+{% else %}
+    <div>Please login to see more.</div>
+
+{% endif %}
 
 
 
