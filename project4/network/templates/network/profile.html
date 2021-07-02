@@ -20,18 +20,7 @@
 <form method="POST" action="{% url 'profile' user.username%}">
     {% csrf_token %}
     <input type="hidden" name="following" value="{{ userprofile.username }}">
-<!--     
-    {{followinglist}}
-    {{userprofile.id}} -->
-    {% if userprofile.id in followinglist %}
-    
-    
-    <button type="submit">Unfollow <strong>{{ userprofile.username }}</strong></button>
-    
-    {% else %}
-    
     <button type="submit">Follow <strong>{{ userprofile.username }}</strong></button>
-    {% endif %}
 </form>
 {% else %}
 <h3>You are following:</h3>
