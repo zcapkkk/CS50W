@@ -73,8 +73,18 @@ def profile(request, username):
             "follows": None
         })
 
+def following(request):
+    user = request.user
+    follows = Follow.objects.filter(follower=user).values_list("following")
+    followinglist = [follow[0] for follow in follows]
 
-    
+    posts = Post.objects.filter(poster__in=followinglist).order_by('-date')
+
+
+    return render(request, "network/following.html", {
+        "posts": posts
+    })
+
 
 def login_view(request):
     if request.method == "POST":

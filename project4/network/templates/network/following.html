@@ -1,0 +1,31 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<h1>Post from people you are following</h1>
+
+
+{% if user.is_authenticated %}
+    {% for post in posts %}
+        <div class="index_post">
+            <h4><strong><a href="{% url 'profile' post.poster.username %}">{{ post.poster }}</a></strong> says:</h4>
+            {{ post.post }}
+            <br>
+            {{ post.date }}
+        </div>
+    
+    {% empty %}
+    <strong>Please follow someone to see their posts.</strong>
+    {% endfor %}
+
+
+
+{% else %}
+
+Please login to view.
+
+{% endif %}
+
+
+
+{% endblock %}
