@@ -1,6 +1,15 @@
 {% extends "network/layout.html" %}
 
+{% load static %}
+
+<script src="{% static 'network/index.js' %}"></script>
+
+
+
+
 {% block body %}
+
+<button id="test_button">Press me!</button>
 
 <div>
     <h2>Write a new post</h2>
@@ -26,6 +35,11 @@
         {{ post.post }}
         <br>
         {{ post.date }}
+
+        <br>
+        {% if request.user == post.poster %}
+        <button class="editbutton">Edit Post</button>
+        {% endif %}
     </div>
     
     {% empty %}

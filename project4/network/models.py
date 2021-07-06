@@ -11,6 +11,9 @@ class Post(models.Model):
     post = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.poster} on {self.date}"
+
 
 class Like(models.Model):
     parent_post = models.ForeignKey(Post, on_delete=models.CASCADE)
