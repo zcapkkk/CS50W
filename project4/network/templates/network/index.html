@@ -2,8 +2,9 @@
 
 {% load static %}
 
+{% block scripts %}
 <script src="{% static 'network/index.js' %}"></script>
-
+{% endblock %}
 
 
 
@@ -38,7 +39,7 @@
 
         <br>
         {% if request.user == post.poster %}
-        <button class="editbutton">Edit Post</button>
+        <button class="editbutton" id="{{post.id}}">Edit Post</button>
         {% endif %}
     </div>
     
