@@ -10,8 +10,6 @@
 
 {% block body %}
 
-<button id="test_button">Press me!</button>
-
 <div>
     <h2>Write a new post</h2>
     {% if user.is_authenticated %}
@@ -32,14 +30,24 @@
 <div>
     {% for post in posts %}
     <div class="index_post">
+        <div id="post_{{post.id}}">
         <h4><strong><a href="{% url 'profile' post.poster.username %}">{{ post.poster }}</a></strong> says:</h4>
         {{ post.post }}
         <br>
         {{ post.date }}
+        </div>
 
-        <br>
+        <button class="likebutton">Like</button>
         {% if request.user == post.poster %}
-        <button class="editbutton" id="{{post.id}}">Edit Post</button>
+        <button class="editbutton" id="editbutton_{{post.id}}">Edit Post</button>
+
+        <div class="edit_post" id="edit_{{post.id}}">
+            <form>
+                {% csrf_token %}
+                <textarea name="text">{{ post.post }}</textarea>
+                <button type="submit">Save edit</button>
+            </form>
+        </div>
         {% endif %}
     </div>
     

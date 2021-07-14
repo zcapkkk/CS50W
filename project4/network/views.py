@@ -2,9 +2,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.db.models.base import Model
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Post, Like, Follow
 
@@ -85,6 +87,20 @@ def following(request):
         "posts": posts
     })
 
+def like(request, id):
+    pass
+
+@login_required 
+def edit(request, id):
+    if request.method == "POST":
+        post = Post.objects.get(id=id)
+        post.post = request.POST["text"]
+        post.save()
+    
+    return JsonResponse({
+        "postUpdate": Post.objects.get(id=id).post
+    })
+    
 
 def login_view(request):
     if request.method == "POST":
@@ -136,3 +152,5 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
