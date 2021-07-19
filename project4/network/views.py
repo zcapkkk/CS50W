@@ -92,7 +92,7 @@ def following(request):
 def like(request, id):
     pass
 
-@csrf_exempt
+
 @login_required 
 def edit(request, id):
     post = Post.objects.get(id=id)

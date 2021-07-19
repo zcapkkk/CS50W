@@ -39,14 +39,15 @@
         {{ post.date }}
         </div>
 
-        <button class="likebutton">Like</button>
-        {% if request.user == post.poster %}
-        <button class="editbutton" id="editbutton_{{post.id}}">Edit Post</button>
 
         <div class="edit_post" id="edit_{{post.id}}">
                 <textarea name="text" id="posttext_{{post.id}}">{{ post.post }}</textarea>
                 <button id="saveedit_{{post.id}}" type="button">Save</button>
         </div>
+        
+        <button class="likebutton">Like</button>
+        {% if request.user == post.poster %}
+        <button class="editbutton" id="editbutton_{{post.id}}">Edit Post</button>
         {% endif %}
     </div>
     
