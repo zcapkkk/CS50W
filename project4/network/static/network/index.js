@@ -6,26 +6,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.editbutton').forEach(button => {
         button.addEventListener('click', () => {
-            id = parseInt(button.id.substring(11)); // should probably use regex instead of hardcoding
-           
+            const id = parseInt(button.id.substring(11)); // should probably use regex instead of hardcoding
+            
             document.querySelector(`#post_${id}`).style.display = "none";
             document.querySelector(`#edit_${id}`).style.display = "inherit";
             button.style.display = "none";
 
-            document.querySelector(`#form_${id}`).onsubmit = function() {
-                fetch("{% url 'edit' id %}", {
-                    method: "POST"
-                })
-                .then(response => response.json())
-                .then(post => {
-                    const updatedpost = document.querySelector(`#post_${id}`)
-                    updatedpost.innerHTML = post.postUpdate;
+            document.querySelector(`#saveedit_${id}`).onclick = function() {
 
-                    updatedpost.style.display = "inherit";
-                    document.querySelector(`#edit_${id}`).style.display = "none";
-                    button.style.display = "inherit";
+                fetch(`post/edit/${id}`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        "text": document.querySelector(`#posttext_${id}`).value
+                    })
                 })
-                }
+                .then(response=> response.json())
+                .then(post => {
+                    document.querySelector(`#edit_${id}`).style.display = "none";
+                    document.querySelector(`#post_${id}`).style.display = "inherit";
+                    button.style.display = "inherit";
+
+                    console.log(post["postUpdate"]);
+                    const updatedpost = document.querySelector(`#postbody_${id}`)
+                    updatedpost.innerHTML = post["postUpdate"];
+
+                    
+                });
+
+            }
+
+            
+
+           
+                
             
         })
 
@@ -40,5 +53,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.innerHTML = 'Like';
             }
         })
+    
+    
+    
+    
+        
     });
+
+
+    
 

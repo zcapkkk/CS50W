@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.db.models.base import Model
@@ -7,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Like, Follow
 
@@ -90,16 +92,17 @@ def following(request):
 def like(request, id):
     pass
 
+@csrf_exempt
 @login_required 
 def edit(request, id):
+    post = Post.objects.get(id=id)
     if request.method == "POST":
-        post = Post.objects.get(id=id)
-        post.post = request.POST["text"]
+        data = json.loads(request.body)
+        post.post = data.get("text","")
         post.save()
-    
-    return JsonResponse({
-        "postUpdate": Post.objects.get(id=id).post
-    })
+        
+    return JsonResponse({"postUpdate": post.post})
+
     
 
 def login_view(request):
