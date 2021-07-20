@@ -20,6 +20,10 @@ class Like(models.Model):
     liker = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="likes", null=True)
     date = models.DateTimeField(auto_now_add=True)
 
+        
+    class Meta:
+        unique_together = [["liker", "parent_post"]]
+
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fan")
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="influencer")

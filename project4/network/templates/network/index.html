@@ -45,7 +45,7 @@
                 <button id="saveedit_{{post.id}}" type="button">Save</button>
         </div>
         
-        <button class="likebutton">Like</button>
+        <button class="likebutton" id="like_{{post.id}}">Like</button>
         {% if request.user == post.poster %}
         <button class="editbutton" id="editbutton_{{post.id}}">Edit Post</button>
         {% endif %}

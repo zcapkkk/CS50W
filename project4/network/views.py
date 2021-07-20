@@ -104,6 +104,26 @@ def edit(request, id):
     return JsonResponse({"postUpdate": post.post})
 
     
+@login_required
+def like(request, id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action = str(data.get("action",""))
+        if action == "like":
+            # do some error checking,
+            # like if cannot get object id or cannot get request.user
+
+            likeobject = Like(parent_post = Post.objects.get(id=id), liker=request.user)
+            likeobject.save()
+            return JsonResponse({"message": "liked"})
+        
+        if action == "unlike":
+
+            likeobject= Like.objects.get(parent_post = Post.objects.get(id=id), liker=request.user)
+            likeobject.delete()
+            return JsonResponse({"message": "unliked"})
+        else:
+            return HttpResponse("Bad command")
 
 def login_view(request):
     if request.method == "POST":

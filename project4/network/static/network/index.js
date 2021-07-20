@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    document.querySelector('.edit_post').style.display = "none";
+
     document.querySelectorAll('.edit_post').forEach(element => {
         element.style.display = "none";
     });
@@ -44,16 +46,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
  
         })
-        })
+    })
     
 
     document.querySelectorAll('.likebutton').forEach(button => {
         button.addEventListener('click', function() {
-            console.log("like button clicked")
+
+            const csrftoken = getCookie('csrftoken')
+                   
+            const id = parseInt(this.id.substring(5));
+            const request = new Request(
+                `post/like/${id}`,
+                {headers: {'X-CSRFToken': csrftoken}}
+            );
+
             if (button.innerHTML === 'Like') {
                 button.innerHTML = 'Liked';
+                
+                fetch(request, {
+                    method: "POST",
+                    mode: "same-origin",
+                    body: JSON.stringify({"action": "like"})
+                })
+                .then(response => response.json())
+                .then(response => console.log(response))
             } else {
                 button.innerHTML = 'Like';
+
+                fetch(request, {
+                    method: "POST",
+                    mode: "same-origin",
+                    body: JSON.stringify({"action": "unlike"})
+                })
+                .then(request => request.json())
+                .then(response => console.log(response))
             }
         })
     
